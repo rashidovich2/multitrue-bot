@@ -42,4 +42,4 @@ def print_format_telebot(source, author, published_time, title, url):
 
 
 def print_format_markdown(published_time, title, url):
-    return "- {} [{}]({})\n".format(published_time, title, url)
+    return f"- {published_time} [{title}]({url})\n"

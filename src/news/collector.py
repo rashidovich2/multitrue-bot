@@ -48,7 +48,7 @@ class WebNewsCollector(NewsCollector):
         self.base_url = base_url
         self._mode = mode
         if news_list is None:
-            news_list = list()
+            news_list = []
         if block_list is None:
             block_list = json.load(open(KEY_PATH / "block_list.json", "r"))["block_list"]
 
@@ -62,15 +62,15 @@ class WebNewsCollector(NewsCollector):
         self.response = requests.get(self.base_url + self.mode, headers=self.headers, params=self.params).text
         data_json = json.loads(self.response)
         if data_json["status"] == "error":
-            print("{}: {}".format(data_json["code"], data_json["message"]))
+            print(f'{data_json["code"]}: {data_json["message"]}')
             raise requests.exceptions.ConnectionError
 
     def filter_news(self):
-        filtered_news_list = list()
-        for news in self.news_list:
-            if any(bl in news.title for bl in self.block_list):
-                continue
-            filtered_news_list.append(news)
+        filtered_news_list = [
+            news
+            for news in self.news_list
+            if all(bl not in news.title for bl in self.block_list)
+        ]
         self.news_list = filtered_news_list
 
     def print_news(self, news):
@@ -230,7 +230,8 @@ class MediastackCollector(WebNewsCollector):
 
     def _get(self):
         self.response = requests.get(
-            "{}{}?access_key={}".format(self.base_url, self._mode, self.key), params=self.params
+            f"{self.base_url}{self._mode}?access_key={self.key}",
+            params=self.params,
         ).text
 
     def format_news(self):

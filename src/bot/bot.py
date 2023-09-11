@@ -29,15 +29,11 @@ logger = logging.getLogger(__name__)
 
 def start(update, context):
     user = update.message.from_user
-    logger.info("User {} started the conversation.".format(user))
+    logger.info(f"User {user} started the conversation.")
     for i, v in vars(user).items():
         context.user_data[i] = v
 
-    welcome_message = (
-        "Hello, {}\n"
-        "This is JC News bot🗞️🤖\n\n"
-        "You can get Top News Headlines for a Country and a Category from here. \n\n".format(user.first_name)
-    )
+    welcome_message = f"Hello, {user.first_name}\nThis is JC News bot🗞️🤖\n\nYou can get Top News Headlines for a Country and a Category from here. \n\n"
     print(context)
     keyborad = [
         [
@@ -83,27 +79,39 @@ def start_over(update, context):
 
 
 def select_category(update, context):
-    logger.info("User data from context {}".format(context.user_data))
-    logger.info("Chat data from context {}".format(context.chat_data))
-    logger.info("Bot data from context {}".format(context.bot_data))
+    logger.info(f"User data from context {context.user_data}")
+    logger.info(f"Chat data from context {context.chat_data}")
+    logger.info(f"Bot data from context {context.bot_data}")
 
     query = update.callback_query
     query.answer()
     country = query.data
     keyborad = [
         [
-            InlineKeyboardButton("👩🏼‍💻Technology", callback_data=country + " technology"),
-            InlineKeyboardButton("🧑‍💼Business", callback_data=country + " business"),
+            InlineKeyboardButton(
+                "👩🏼‍💻Technology", callback_data=f"{country} technology"
+            ),
+            InlineKeyboardButton(
+                "🧑‍💼Business", callback_data=f"{country} business"
+            ),
         ],
         [
-            InlineKeyboardButton("👨🏻‍🎤Entertainment", callback_data=country + " entertainment"),
-            InlineKeyboardButton("👩🏻‍⚕️Health", callback_data=country + " health"),
+            InlineKeyboardButton(
+                "👨🏻‍🎤Entertainment", callback_data=f"{country} entertainment"
+            ),
+            InlineKeyboardButton(
+                "👩🏻‍⚕️Health", callback_data=f"{country} health"
+            ),
         ],
         [
-            InlineKeyboardButton("👨🏿‍🔬Science", callback_data=country + " science"),
-            InlineKeyboardButton("🏋🏼‍♂️Sports", callback_data=country + " sports"),
+            InlineKeyboardButton(
+                "👨🏿‍🔬Science", callback_data=f"{country} science"
+            ),
+            InlineKeyboardButton(
+                "🏋🏼‍♂️Sports", callback_data=f"{country} sports"
+            ),
         ],
-        [InlineKeyboardButton("🌎General", callback_data=country + " general")],
+        [InlineKeyboardButton("🌎General", callback_data=f"{country} general")],
     ]
     reply_markup = InlineKeyboardMarkup(keyborad)
     query.edit_message_text(text="Please Choose a Category🤖", reply_markup=reply_markup)
@@ -124,7 +132,7 @@ def get_news(update, context):
 
     context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Top {} latest news of [{}] [{}] for you🤖".format(len(news_list), country.upper(), category.upper()),
+        text=f"Top {len(news_list)} latest news of [{country.upper()}] [{category.upper()}] for you🤖",
     )
 
     for news in news_list:
